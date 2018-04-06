@@ -1,3 +1,5 @@
+import os
+
 import argparse
 from pystego import utils
 
@@ -16,5 +18,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    image_data = utils.encode(args.channel, args.secret)
+    size = os.path.getsize(args.secret)
+    with open(args.secret, 'rb') as f:
+        image_data = utils.encode(args.channel, f, size)
     utils.writeImage(image_data, args.out)
