@@ -28,4 +28,4 @@ decode_image --encoded hidden.png --width 400 --height 400 --out recovered.png
 - Both PNGs must have alpha values in order to process correctly
 - Only the lower two bits of the `channel` image are used to hide the `secret` image.
 There is currently no way to configure this.
-If the `secret` image is too big, it an exception will be raised instead of trying to use more bits.
+If the `secret` image is too big, an exception will be raised instead of trying to use more bits.
