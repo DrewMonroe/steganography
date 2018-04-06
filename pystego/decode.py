@@ -1,5 +1,5 @@
 import argparse
-import utils
+from pystego import utils
 
 
 if __name__ == "__main__":

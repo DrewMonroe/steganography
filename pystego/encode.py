@@ -1,9 +1,9 @@
 import argparse
-import utils
+from pystego import utils
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser = argparse.ArgumentParser(description='Hide one PNG in another')
     parser.add_argument('--secret', '-s',
                         help='The image you want to be secret',
                         required=True)

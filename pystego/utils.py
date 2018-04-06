@@ -172,7 +172,7 @@ def decode(encoded_path, width, height):
     return new_image
 
 
-def write_image(np_array, file_path):
+def writeImage(np_array, file_path):
     """Writes a numpy array out to a file"""
     new_image = Image.fromarray(np_array)
     new_image.save(file_path)
