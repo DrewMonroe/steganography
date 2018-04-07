@@ -1,6 +1,3 @@
-import binascii
-import sys
-
 import numpy
 from PIL import Image
 
@@ -32,6 +29,25 @@ def hide(hideme, pixel, length=2):
 def recover(pixel, length=2):
     """Recovers the 2 bits hidden in the pixel"""
     return pixel[-length:]
+
+
+def read_data(bytes, x, y, pixel_data, width):
+    """Read the specified number of bytes, starting at the given offsets"""
+    data = ""
+
+    # We read two bits at a time, so we'd need 4 reads to get one byte.
+    # So, 4 bytes * total bytes is how many reads we need to do from the image
+    for i in range(4*bytes):
+        # Recover the next pixel
+        data += recover(pixel_to_bytes(pixel_data[x, y]))
+        x += 1
+
+        # Wrap around to the next row if we need to
+        if x >= width:
+            x = 0
+            y += 1
+
+    return data
 
 
 def encode(original, secret, size):
@@ -111,20 +127,6 @@ def encode(original, secret, size):
 
     # Return our new image!
     return new_image
-
-
-def read_data(bytes, x, y, pixel_data, width):
-    data_chunk = ""
-
-    for i in range(4*bytes):
-        data_chunk += recover(pixel_to_bytes(pixel_data[x, y]))
-        x += 1
-
-        if x >= width:
-            x = 0
-            y += 1
-
-    return data_chunk
 
 
 def decode(encoded_path):
