@@ -113,6 +113,20 @@ def encode(original, secret, size):
     return new_image
 
 
+def read_data(bytes, x, y, pixel_data, width):
+    data_chunk = ""
+
+    for i in range(4*bytes):
+        data_chunk += recover(pixel_to_bytes(pixel_data[x, y]))
+        x += 1
+
+        if x >= width:
+            x = 0
+            y += 1
+
+    return data_chunk
+
+
 def decode(encoded_path):
     """Encodes the secret image inside of the original image"""
     encoded = Image.open(encoded_path)
@@ -128,37 +142,20 @@ def decode(encoded_path):
     # TODO: Don't hardcode this
     channels = 4
 
-    # The new image that we are creating
-    data = bytearray()
-
-    size_str = ""
-    for i in range(16):
-        size_str += recover(pixel_to_bytes(encoded_pixels[x, y]))
-        x += 1
-
-        if x >= encoded_width:
-            x = 0
-            y += 1
-
+    # Read the first four bytes (the 32 bits that are the length of the rest
+    # of the encoded data)
+    size_str = read_data(4, x, y, encoded_pixels, encoded_width)
+    # Trun the string into an integer
     message_size = int(size_str, 2)
-    print(message_size)
-    i = 0
 
-    data_chunk = ""
-    while i < message_size:
-        for j in range(4):
-            data_chunk += recover(pixel_to_bytes(encoded_pixels[x, y]))
-            x += 1
+    # Fix the x and y coordaintes based upon how far we read into the image
+    # for the length
+    x = 16 % encoded_width
+    y = 16 / encoded_width
 
-            if x >= encoded_width:
-                x = 0
-                y += 1
-
-        data += int(data_chunk, 2).to_bytes(1, 'big')
-        data_chunk = ""
-        i += 1
-
-    return data
+    # Read the rest of the data
+    return int(read_data(message_size, x, y, encoded_pixels, encoded_width),
+               2).to_bytes(message_size, 'big')
 
 
 def writeImage(np_array, file_path):
