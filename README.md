@@ -20,7 +20,7 @@ pip install git+https://github.com/DrewMonroe/steganography.git#egg=pystego
 # To encode an image
 encode_image --secret tux.png --channel crab_nebula.png --out hidden.png
 # To decode an image
-decode_image --encoded hidden.png --width 400 --height 400 --out recovered.png
+decode_image --encoded hidden.png --out recovered.png
 ```
 
 ## Limitations

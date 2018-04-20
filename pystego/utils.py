@@ -1,5 +1,6 @@
 import numpy
 from PIL import Image
+from matplotlib import pyplot
 
 
 def pixel_to_bytes(p):
@@ -164,3 +165,33 @@ def writeImage(np_array, file_path):
     """Writes a numpy array out to a file"""
     new_image = Image.fromarray(np_array)
     new_image.save(file_path)
+
+
+def openImage(path):
+    return Image.open(path).load()
+
+
+def analyze_image(path):
+    image = Image.open(path)
+    pixels = image.load()
+
+    width = image.size[0]
+    height = image.size[1]
+    data = []
+
+    tmp_height = int(200)
+    for h in range(tmp_height):
+        total = 0
+        for w in range(width):
+            total += int(recover(pixel_to_bytes(pixels[w, h])), 2)
+        data.append(total)
+
+    return [x for x in range(tmp_height)], data
+
+
+def analyze(image1, image2):
+    image1_x, image1_y = analyze_image(image1)
+    image2_x, image2_y = analyze_image(image2)
+    pyplot.bar(image1_x, image1_y, align="edge")
+    pyplot.bar(image2_x, image2_y, align="edge", width=-.8, color="red")
+    pyplot.show()
